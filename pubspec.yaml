@@ -1,9 +1,16 @@
 name: ble_peripheral_plus
-description: A maintained fork of ble_peripheral for using a device as a Bluetooth Low Energy peripheral.
+description: A maintained Flutter BLE peripheral and GATT server plugin for Android, iOS, macOS, and Windows, based on ble_peripheral.
 version: 2.5.1
 homepage: https://github.com/Masum-MSNR/ble_peripheral_plus
 repository: https://github.com/Masum-MSNR/ble_peripheral_plus
 issue_tracker: https://github.com/Masum-MSNR/ble_peripheral_plus/issues
+documentation: https://github.com/Masum-MSNR/ble_peripheral_plus#readme
+topics:
+  - bluetooth
+  - ble
+  - gatt
+  - peripheral
+  - flutter-plugin
 
 environment:
   sdk: ">=3.2.0 <4.0.0"

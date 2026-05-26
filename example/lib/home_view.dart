@@ -1,4 +1,4 @@
-import 'package:ble_peripheral_plus/ble_peripheral.dart';
+import 'package:ble_peripheral_plus/ble_peripheral_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home_controller.dart';

@@ -8,7 +8,8 @@ import 'package:pigeon/pigeon.dart';
     dartOptions: DartOptions(),
     kotlinOut:
         'android/src/main/kotlin/com/rohit/ble_peripheral/BlePeripheral.g.kt',
-    swiftOut: 'darwin/Classes/BlePeripheral.g.swift',
+    swiftOut:
+      'darwin/ble_peripheral_plus/Sources/ble_peripheral_plus/BlePeripheral.g.swift',
     cppOptions: CppOptions(namespace: 'ble_peripheral'),
     kotlinOptions: KotlinOptions(package: 'com.rohit.ble_peripheral'),
     swiftOptions: SwiftOptions(),

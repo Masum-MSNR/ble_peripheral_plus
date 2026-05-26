@@ -2,7 +2,7 @@
 
 import 'dart:convert';
 
-import 'package:ble_peripheral_plus/ble_peripheral.dart';
+import 'package:ble_peripheral_plus/ble_peripheral_plus.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 

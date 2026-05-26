@@ -28,3 +28,5 @@ migrate_working_dir/
 .dart_tool/
 .packages
 build/
+darwin/ble_peripheral_plus/.build/
+darwin/ble_peripheral_plus/.swiftpm/

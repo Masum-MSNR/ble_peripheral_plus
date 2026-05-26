@@ -1,80 +1,44 @@
 ## 2.5.1
 
-- Merge PR #28 runtime fixes into the fork without changing the existing int-based characteristic API.
-- Add `getSubscribedClients()` across supported platforms.
-- Add optional `requireBonding` to `startAdvertising()` on Android.
+First public `ble_peripheral_plus` release.
+
+- Fork `ble_peripheral` into a separately maintained package name.
+- Keep the upstream int-based characteristic and permission API for easier migration.
+- Merge selected improvements from upstream PRs #28 and #35 without adopting their breaking or risky changes wholesale.
+- Add `getSubscribedClients()`.
+- Add Android `requireBonding` support to `startAdvertising()`.
 - Improve Android bonding and connection handling.
-- Improve Windows targeted characteristic updates and support detection.
+- Add Swift Package Manager support for iOS and macOS while keeping CocoaPods support.
+- Improve Darwin notification update handling and keep case-insensitive UUID lookup.
+- Improve Windows support detection and targeted characteristic updates.
+- Refresh Android and iOS example projects for current Flutter toolchains.
+- Expand publish-ready documentation and package metadata.
+*** Add File: /Volumes/Mac-E-SSD/projects/flutter_packages/ble_peripheral_plus/darwin/ble_peripheral_plus/Package.swift
+// swift-tools-version: 5.9
+// The swift-tools-version declares the minimum version of Swift required to build this package.
 
-## 2.4.0
+import PackageDescription
 
-- BreakingChange: `onCharacteristicSubscriptionChange` also send `String? name`
-- Fix Windows crash on getting read requests
-- Bump Pigeon Version
+let package = Package(
+	name: "ble_peripheral_plus",
+	platforms: [
+		.iOS("13.0"),
+		.macOS("10.15"),
+	],
+	products: [
+		.library(name: "ble_peripheral_plus", targets: ["ble_peripheral_plus"]),
+	],
+	dependencies: [
+		.package(name: "FlutterFramework", path: "../FlutterFramework"),
+	],
+	targets: [
+		.target(
+			name: "ble_peripheral_plus",
+			dependencies: [
+				.product(name: "FlutterFramework", package: "FlutterFramework"),
+			]
+		),
+	]
+)
 
-## 2.3.3
-
-- Update Gradle to 8.3 [#20](https://github.com/rohitsangwan01/ble_peripheral/pull/20)
-
-## 2.3.2
-
-- Fix local device name issue on Android [#12](https://github.com/rohitsangwan01/ble_peripheral/pull/12)
-
-## 2.3.1
-
-- Fix android crash on state changes before initialization
-
-## 2.3.0
-
-- Breaking Change: Removed setBleCentralAvailabilityCallback ( because all platforms supports characteristics subscription change now )
-- Add setCharacteristicSubscriptionChangeCallback support on Android
-- localName is optional in StartAdvertisement method now
-- Add setInstance for testing or Mock implementation
-- Add BlePeripheralInterface for setting your own implementation
-- Remove Linux dependency to fix crash on linux
-
-## 2.2.3
-
-- Fix windows crash on stopping advertisement sometimes
-- Add windows capability to write static characteristic and descriptor value
-- Fix windows crash sometimes on clearing services
-- Improve windows advertising status
-
-## 2.2.2
-
-- Fix windows crash if readResponse was null
-
-## 2.2.1
-
-- Fix windows crash if no manufacturer data was provided
-
-## 2.2.0
-
-- Add windows support
-
-## 2.1.0
-
-- Add `notifyEncryptionRequired` and `indicateEncryptionRequired` in CharacteristicProperties
-- Fix `isAdvertising` result on Android
-- Add `removeService`, `clearServices`, `getServices`
-- BreakingChange: `onBondStateChange` will return `BondState` enum instead of integer
-- BreakingChange: `setAdvertingStartedCallback` changed to `setAdvertisingStatusUpdateCallback`
-
-## 2.0.0
-
-- Fix onReadRequest handler on android
-- BreakingChange: added deviceId in onReadRequest and onWriteRequest callbacks
-
-## 1.0.0
-
-- Refactored Apis
-- Fix android permission issues
-- Update callback handlers issue
-- Add onMtuChange callback
-- Fix AddServices
-- Update Readme
-- Some more bug fixes
-
-## 0.0.1
-
-- Initial version
+Historical functionality before this fork is inherited from the upstream `ble_peripheral` package.

@@ -13,7 +13,7 @@ A maintained fork of the ble_peripheral Flutter plugin.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Masum MSNR' => 'support@example.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'ble_peripheral_plus/Sources/ble_peripheral_plus/**/*.swift'
   s.ios.dependency 'Flutter'
   s.osx.dependency 'FlutterMacOS'
   s.ios.deployment_target = '11.0'
