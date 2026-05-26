@@ -55,7 +55,11 @@ class BlePeripheral {
   /// Get list of services added to the peripheral
   static Future<List<String>> getServices() => _platform.getServices();
 
-  /// To update the value of a characteristic
+  /// Get list of clients subscribed to characteristics.
+  static Future<List<SubscribedClient>> getSubscribedClients() =>
+      _platform.getSubscribedClients();
+
+  /// Update the value of a characteristic.
   static Future<void> updateCharacteristic({
     required String characteristicId,
     required Uint8List value,
@@ -73,13 +77,27 @@ class BlePeripheral {
     int? timeout,
     ManufacturerData? manufacturerData,
     bool addManufacturerDataInScanResponse = false,
+    bool requireBonding = true,
   }) {
+    final hasServices = services.isNotEmpty;
+    if (defaultTargetPlatform == TargetPlatform.android &&
+        hasServices &&
+        localName != null &&
+        localName.length > 8) {
+      throw ArgumentError(
+        'localName "$localName" is ${localName.length} characters. '
+        'Use 8 characters or fewer when advertising services on Android '
+        'to avoid ADVERTISE_FAILED_DATA_TOO_LARGE.',
+      );
+    }
+
     return _platform.startAdvertising(
       services: services,
       localName: localName,
       timeout: timeout,
       manufacturerData: manufacturerData,
       addManufacturerDataInScanResponse: addManufacturerDataInScanResponse,
+      requireBonding: requireBonding,
     );
   }
 

@@ -25,6 +25,10 @@ abstract class BlePeripheralInterface {
     throw UnimplementedError();
   }
 
+  Future<List<SubscribedClient>> getSubscribedClients() {
+    throw UnimplementedError();
+  }
+
   Future<void> updateCharacteristic({
     required String characteristicId,
     required Uint8List value,
@@ -37,6 +41,7 @@ abstract class BlePeripheralInterface {
     int? timeout,
     ManufacturerData? manufacturerData,
     bool addManufacturerDataInScanResponse = false,
+    bool requireBonding = true,
   });
 
   Future<void> stopAdvertising();

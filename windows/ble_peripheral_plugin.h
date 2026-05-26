@@ -83,6 +83,7 @@ namespace ble_peripheral
 
         // BluetoothLe
         Radio bluetoothRadio{nullptr};
+        BluetoothAdapter adapter{nullptr};
 
         winrt::fire_and_forget InitializeAdapter();
         winrt::fire_and_forget AddServiceAsync(const BleService &service);
@@ -114,12 +115,14 @@ namespace ble_peripheral
         std::optional<FlutterError> RemoveService(const std::string &service_id);
         std::optional<FlutterError> ClearServices();
         ErrorOr<flutter::EncodableList> GetServices();
+        ErrorOr<flutter::EncodableList> GetSubscribedClients();
         std::optional<FlutterError> StartAdvertising(
             const flutter::EncodableList &services,
             const std::string *local_name,
             const int64_t *timeout,
             const ManufacturerData *manufacturer_data,
-            bool add_manufacturer_data_in_scan_response);
+            bool add_manufacturer_data_in_scan_response,
+            bool require_bonding);
         std::optional<FlutterError> UpdateCharacteristic(
             const std::string &characteristic_id,
             const std::vector<uint8_t> &value,

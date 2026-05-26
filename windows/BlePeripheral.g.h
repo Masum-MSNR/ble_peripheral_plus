@@ -189,6 +189,34 @@ class BleDescriptor {
 
 
 // Generated class from Pigeon that represents data sent in messages.
+class SubscribedClient {
+ public:
+  // Constructs an object setting all fields.
+  explicit SubscribedClient(
+    const std::string& device_id,
+    const flutter::EncodableList& subscribed_characteristics);
+
+  const std::string& device_id() const;
+  void set_device_id(std::string_view value_arg);
+
+  const flutter::EncodableList& subscribed_characteristics() const;
+  void set_subscribed_characteristics(const flutter::EncodableList& value_arg);
+
+
+ private:
+  static SubscribedClient FromEncodableList(const flutter::EncodableList& list);
+  flutter::EncodableList ToEncodableList() const;
+  friend class BlePeripheralChannel;
+  friend class BlePeripheralChannelCodecSerializer;
+  friend class BleCallback;
+  friend class BleCallbackCodecSerializer;
+  std::string device_id_;
+  flutter::EncodableList subscribed_characteristics_;
+
+};
+
+
+// Generated class from Pigeon that represents data sent in messages.
 class ReadRequestResult {
  public:
   // Constructs an object setting all non-nullable fields.
@@ -328,12 +356,14 @@ class BlePeripheralChannel {
   virtual std::optional<FlutterError> RemoveService(const std::string& service_id) = 0;
   virtual std::optional<FlutterError> ClearServices() = 0;
   virtual ErrorOr<flutter::EncodableList> GetServices() = 0;
+  virtual ErrorOr<flutter::EncodableList> GetSubscribedClients() = 0;
   virtual std::optional<FlutterError> StartAdvertising(
     const flutter::EncodableList& services,
     const std::string* local_name,
     const int64_t* timeout,
     const ManufacturerData* manufacturer_data,
-    bool add_manufacturer_data_in_scan_response) = 0;
+    bool add_manufacturer_data_in_scan_response,
+    bool require_bonding) = 0;
   virtual std::optional<FlutterError> UpdateCharacteristic(
     const std::string& characteristic_id,
     const std::vector<uint8_t>& value,

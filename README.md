@@ -40,6 +40,9 @@ await BlePeripheral.addService(
 // To get list of added services
 await BlePeripheral.getServices();
 
+// To get subscribed clients and their characteristic subscriptions
+await BlePeripheral.getSubscribedClients();
+
 // To remove any specific services
 await BlePeripheral.removeService(String serviceId);
 
@@ -59,6 +62,7 @@ BlePeripheral.setAdvertisingStatusUpdateCallback((bool advertising, String? erro
 await BlePeripheral.startAdvertising(
   services: [serviceBattery],
   localName: "TestBle",
+  requireBonding: true,
 );
 ```
 

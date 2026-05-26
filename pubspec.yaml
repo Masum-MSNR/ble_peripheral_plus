@@ -1,6 +1,6 @@
 name: ble_peripheral_plus
 description: A maintained fork of ble_peripheral for using a device as a Bluetooth Low Energy peripheral.
-version: 2.4.0
+version: 2.5.1
 homepage: https://github.com/Masum-MSNR/ble_peripheral_plus
 repository: https://github.com/Masum-MSNR/ble_peripheral_plus
 issue_tracker: https://github.com/Masum-MSNR/ble_peripheral_plus/issues

@@ -52,6 +52,12 @@ class BleDescriptor {
   BleDescriptor(this.uuid, this.value, this.permissions);
 }
 
+class SubscribedClient {
+  String deviceId;
+  List<String?> subscribedCharacteristics;
+  SubscribedClient(this.deviceId, this.subscribedCharacteristics);
+}
+
 class ReadRequestResult {
   Uint8List value;
   int? offset;
@@ -93,12 +99,15 @@ abstract class BlePeripheralChannel {
 
   List<String> getServices();
 
+  List<SubscribedClient> getSubscribedClients();
+
   void startAdvertising(
     List<String> services,
     String? localName,
     int? timeout,
     ManufacturerData? manufacturerData,
     bool addManufacturerDataInScanResponse,
+    bool requireBonding,
   );
 
   void updateCharacteristic(

@@ -145,6 +145,28 @@ data class BleDescriptor (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
+data class SubscribedClient (
+  val deviceId: String,
+  val subscribedCharacteristics: List<String?>
+
+) {
+  companion object {
+    @Suppress("UNCHECKED_CAST")
+    fun fromList(list: List<Any?>): SubscribedClient {
+      val deviceId = list[0] as String
+      val subscribedCharacteristics = list[1] as List<String?>
+      return SubscribedClient(deviceId, subscribedCharacteristics)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf<Any?>(
+      deviceId,
+      subscribedCharacteristics,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
 data class ReadRequestResult (
   val value: ByteArray,
   val offset: Long? = null,
@@ -239,6 +261,11 @@ private object BlePeripheralChannelCodec : StandardMessageCodec() {
           ManufacturerData.fromList(it)
         }
       }
+      132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          SubscribedClient.fromList(it)
+        }
+      }
       else -> super.readValueOfType(type, buffer)
     }
   }
@@ -258,6 +285,10 @@ private object BlePeripheralChannelCodec : StandardMessageCodec() {
       }
       is ManufacturerData -> {
         stream.write(131)
+        writeValue(stream, value.toList())
+      }
+      is SubscribedClient -> {
+        stream.write(132)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -280,7 +311,8 @@ interface BlePeripheralChannel {
   fun removeService(serviceId: String)
   fun clearServices()
   fun getServices(): List<String>
-  fun startAdvertising(services: List<String>, localName: String?, timeout: Long?, manufacturerData: ManufacturerData?, addManufacturerDataInScanResponse: Boolean)
+  fun getSubscribedClients(): List<SubscribedClient>
+  fun startAdvertising(services: List<String>, localName: String?, timeout: Long?, manufacturerData: ManufacturerData?, addManufacturerDataInScanResponse: Boolean, requireBonding: Boolean)
   fun updateCharacteristic(characteristicId: String, value: ByteArray, deviceId: String?)
 
   companion object {
@@ -445,6 +477,22 @@ interface BlePeripheralChannel {
         }
       }
       run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.getSubscribedClients", codec)
+        if (api != null) {
+          channel.setMessageHandler { _, reply ->
+            var wrapped: List<Any?>
+            try {
+              wrapped = listOf<Any?>(api.getSubscribedClients())
+            } catch (exception: Throwable) {
+              wrapped = wrapError(exception)
+            }
+            reply.reply(wrapped)
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
         val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.startAdvertising", codec)
         if (api != null) {
           channel.setMessageHandler { message, reply ->
@@ -454,9 +502,10 @@ interface BlePeripheralChannel {
             val timeoutArg = args[2].let { if (it is Int) it.toLong() else it as Long? }
             val manufacturerDataArg = args[3] as ManufacturerData?
             val addManufacturerDataInScanResponseArg = args[4] as Boolean
+            val requireBondingArg = args[5] as Boolean
             var wrapped: List<Any?>
             try {
-              api.startAdvertising(servicesArg, localNameArg, timeoutArg, manufacturerDataArg, addManufacturerDataInScanResponseArg)
+              api.startAdvertising(servicesArg, localNameArg, timeoutArg, manufacturerDataArg, addManufacturerDataInScanResponseArg, requireBondingArg)
               wrapped = listOf<Any?>(null)
             } catch (exception: Throwable) {
               wrapped = wrapError(exception)

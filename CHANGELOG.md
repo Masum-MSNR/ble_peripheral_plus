@@ -1,3 +1,11 @@
+## 2.5.1
+
+- Merge PR #28 runtime fixes into the fork without changing the existing int-based characteristic API.
+- Add `getSubscribedClients()` across supported platforms.
+- Add optional `requireBonding` to `startAdvertising()` on Android.
+- Improve Android bonding and connection handling.
+- Improve Windows targeted characteristic updates and support detection.
+
 ## 2.4.0
 
 - BreakingChange: `onCharacteristicSubscriptionChange` also send `String? name`

@@ -36,24 +36,34 @@ namespace ble_peripheral
 
   winrt::fire_and_forget BlePeripheralPlugin::InitializeAdapter()
   {
-    auto radios = co_await Radio::GetRadiosAsync();
-    for (auto &&radio : radios)
+    const auto &bluetooth_adapter = co_await BluetoothAdapter::GetDefaultAsync();
+    if (bluetooth_adapter != nullptr)
     {
-      if (radio.Kind() == RadioKind::Bluetooth)
+      adapter = bluetooth_adapter;
+      bluetoothRadio = co_await bluetooth_adapter.GetRadioAsync();
+    }
+    else
+    {
+      auto radios = co_await Radio::GetRadiosAsync();
+      for (auto &&radio : radios)
       {
-        bluetoothRadio = radio;
-        radioStateChangedRevoker = bluetoothRadio.StateChanged(winrt::auto_revoke, {this, &BlePeripheralPlugin::Radio_StateChanged});
-        bool isOn = bluetoothRadio.State() == RadioState::On;
-        uiThreadHandler_.Post([isOn]
-                              { bleCallback->OnBleStateChange(isOn, SuccessCallback, ErrorCallback); });
-
-        break;
+        if (radio.Kind() == RadioKind::Bluetooth)
+        {
+          bluetoothRadio = radio;
+          break;
+        }
       }
     }
     if (!bluetoothRadio)
     {
       std::cout << "Bluetooth is not available" << std::endl;
+      co_return;
     }
+
+    radioStateChangedRevoker = bluetoothRadio.StateChanged(winrt::auto_revoke, {this, &BlePeripheralPlugin::Radio_StateChanged});
+    bool isOn = bluetoothRadio.State() == RadioState::On;
+    uiThreadHandler_.Post([isOn]
+                          { bleCallback->OnBleStateChange(isOn, SuccessCallback, ErrorCallback); });
   }
 
   std::optional<FlutterError> BlePeripheralPlugin::Initialize()
@@ -74,7 +84,9 @@ namespace ble_peripheral
 
   ErrorOr<bool> BlePeripheralPlugin::IsSupported()
   {
-    return bluetoothRadio != nullptr;
+    if (!adapter)
+      return false;
+    return adapter.IsPeripheralRoleSupported();
   };
 
   ErrorOr<bool> BlePeripheralPlugin::AskBlePermission()
@@ -85,6 +97,11 @@ namespace ble_peripheral
 
   std::optional<FlutterError> BlePeripheralPlugin::AddService(const BleService &service)
   {
+    std::string serviceId = to_lower_case(service.uuid());
+    if (serviceProviderMap.find(serviceId) != serviceProviderMap.end())
+    {
+      return FlutterError("Service already added");
+    }
     AddServiceAsync(service);
     return std::nullopt;
   };
@@ -125,15 +142,47 @@ namespace ble_peripheral
     return services;
   }
 
+  ErrorOr<flutter::EncodableList> BlePeripheralPlugin::GetSubscribedClients()
+  {
+    auto deviceMap = std::map<std::string, flutter::EncodableList>();
+    for (auto const &[key, gattServiceObject] : serviceProviderMap)
+    {
+      for (auto const &[charKey, gattChar] : gattServiceObject->characteristics)
+      {
+        auto clients = gattChar->stored_clients;
+        for (unsigned int i = 0; i < clients.Size(); ++i)
+        {
+          auto client = clients.GetAt(i);
+          std::string deviceId = ParseBluetoothClientId(client.Session().DeviceId().Id());
+          if (deviceMap.find(deviceId) == deviceMap.end())
+          {
+            deviceMap.insert_or_assign(deviceId, flutter::EncodableList());
+          }
+          deviceMap[deviceId].push_back(flutter::EncodableValue(charKey));
+        }
+      }
+    }
+
+    flutter::EncodableList clientsList = flutter::EncodableList();
+    for (auto const &[deviceId, charList] : deviceMap)
+    {
+      clientsList.push_back(
+          flutter::CustomEncodableValue(SubscribedClient(deviceId, charList)));
+    }
+    return clientsList;
+  }
+
   std::optional<FlutterError> BlePeripheralPlugin::StartAdvertising(
       const flutter::EncodableList &services,
       const std::string *local_name,
       const int64_t *timeout,
       const ManufacturerData *manufacturer_data,
-      bool add_manufacturer_data_in_scan_response)
+      bool add_manufacturer_data_in_scan_response,
+      bool require_bonding)
   {
     try
     {
+      (void)require_bonding;
       // check if services are empty
       if (serviceProviderMap.size() == 0)
         return FlutterError("No services added to advertise");
@@ -206,6 +255,21 @@ namespace ble_peripheral
     DataWriter writer;
     writer.ByteOrder(ByteOrder::LittleEndian);
     writer.WriteBuffer(bytes);
+
+    if (device_id != nullptr)
+    {
+      std::string deviceId = *device_id;
+      for (auto const &client : gattCharacteristicObject->stored_clients)
+      {
+        if (ParseBluetoothClientId(client.Session().DeviceId().Id()) == deviceId)
+        {
+          gattCharacteristicObject->obj.NotifyValueAsync(writer.DetachBuffer(), client);
+          return std::nullopt;
+        }
+      }
+      return FlutterError("Device not subscribed to this characteristic");
+    }
+
     gattCharacteristicObject->obj.NotifyValueAsync(writer.DetachBuffer());
     return std::nullopt;
   }

@@ -139,6 +139,28 @@ struct BleDescriptor {
 }
 
 /// Generated class from Pigeon that represents data sent in messages.
+struct SubscribedClient {
+  var deviceId: String
+  var subscribedCharacteristics: [String?]
+
+  static func fromList(_ list: [Any?]) -> SubscribedClient? {
+    let deviceId = list[0] as! String
+    let subscribedCharacteristics = list[1] as! [String?]
+
+    return SubscribedClient(
+      deviceId: deviceId,
+      subscribedCharacteristics: subscribedCharacteristics
+    )
+  }
+  func toList() -> [Any?] {
+    return [
+      deviceId,
+      subscribedCharacteristics,
+    ]
+  }
+}
+
+/// Generated class from Pigeon that represents data sent in messages.
 struct ReadRequestResult {
   var value: FlutterStandardTypedData
   var offset: Int64? = nil
@@ -222,6 +244,8 @@ private class BlePeripheralChannelCodecReader: FlutterStandardReader {
       return BleService.fromList(self.readValue() as! [Any?])
     case 131:
       return ManufacturerData.fromList(self.readValue() as! [Any?])
+    case 132:
+      return SubscribedClient.fromList(self.readValue() as! [Any?])
     default:
       return super.readValue(ofType: type)
     }
@@ -241,6 +265,9 @@ private class BlePeripheralChannelCodecWriter: FlutterStandardWriter {
       super.writeValue(value.toList())
     } else if let value = value as? ManufacturerData {
       super.writeByte(131)
+      super.writeValue(value.toList())
+    } else if let value = value as? SubscribedClient {
+      super.writeByte(132)
       super.writeValue(value.toList())
     } else {
       super.writeValue(value)
@@ -275,7 +302,8 @@ protocol BlePeripheralChannel {
   func removeService(serviceId: String) throws
   func clearServices() throws
   func getServices() throws -> [String]
-  func startAdvertising(services: [String], localName: String?, timeout: Int64?, manufacturerData: ManufacturerData?, addManufacturerDataInScanResponse: Bool) throws
+  func getSubscribedClients() throws -> [SubscribedClient]
+  func startAdvertising(services: [String], localName: String?, timeout: Int64?, manufacturerData: ManufacturerData?, addManufacturerDataInScanResponse: Bool, requireBonding: Bool) throws
   func updateCharacteristic(characteristicId: String, value: FlutterStandardTypedData, deviceId: String?) throws
 }
 
@@ -406,6 +434,19 @@ class BlePeripheralChannelSetup {
     } else {
       getServicesChannel.setMessageHandler(nil)
     }
+    let getSubscribedClientsChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.getSubscribedClients", binaryMessenger: binaryMessenger, codec: codec)
+    if let api = api {
+      getSubscribedClientsChannel.setMessageHandler { _, reply in
+        do {
+          let result = try api.getSubscribedClients()
+          reply(wrapResult(result))
+        } catch {
+          reply(wrapError(error))
+        }
+      }
+    } else {
+      getSubscribedClientsChannel.setMessageHandler(nil)
+    }
     let startAdvertisingChannel = FlutterBasicMessageChannel(name: "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.startAdvertising", binaryMessenger: binaryMessenger, codec: codec)
     if let api = api {
       startAdvertisingChannel.setMessageHandler { message, reply in
@@ -415,8 +456,9 @@ class BlePeripheralChannelSetup {
         let timeoutArg: Int64? = isNullish(args[2]) ? nil : (args[2] is Int64? ? args[2] as! Int64? : Int64(args[2] as! Int32))
         let manufacturerDataArg: ManufacturerData? = nilOrValue(args[3])
         let addManufacturerDataInScanResponseArg = args[4] as! Bool
+        let requireBondingArg = args[5] as! Bool
         do {
-          try api.startAdvertising(services: servicesArg, localName: localNameArg, timeout: timeoutArg, manufacturerData: manufacturerDataArg, addManufacturerDataInScanResponse: addManufacturerDataInScanResponseArg)
+          try api.startAdvertising(services: servicesArg, localName: localNameArg, timeout: timeoutArg, manufacturerData: manufacturerDataArg, addManufacturerDataInScanResponse: addManufacturerDataInScanResponseArg, requireBonding: requireBondingArg)
           reply(wrapResult(nil))
         } catch {
           reply(wrapError(error))

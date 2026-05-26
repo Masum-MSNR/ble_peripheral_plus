@@ -255,6 +255,47 @@ BleDescriptor BleDescriptor::FromEncodableList(const EncodableList& list) {
   return decoded;
 }
 
+// SubscribedClient
+
+SubscribedClient::SubscribedClient(
+  const std::string& device_id,
+  const EncodableList& subscribed_characteristics)
+ : device_id_(device_id),
+    subscribed_characteristics_(subscribed_characteristics) {}
+
+const std::string& SubscribedClient::device_id() const {
+  return device_id_;
+}
+
+void SubscribedClient::set_device_id(std::string_view value_arg) {
+  device_id_ = value_arg;
+}
+
+
+const EncodableList& SubscribedClient::subscribed_characteristics() const {
+  return subscribed_characteristics_;
+}
+
+void SubscribedClient::set_subscribed_characteristics(const EncodableList& value_arg) {
+  subscribed_characteristics_ = value_arg;
+}
+
+
+EncodableList SubscribedClient::ToEncodableList() const {
+  EncodableList list;
+  list.reserve(2);
+  list.push_back(EncodableValue(device_id_));
+  list.push_back(EncodableValue(subscribed_characteristics_));
+  return list;
+}
+
+SubscribedClient SubscribedClient::FromEncodableList(const EncodableList& list) {
+  SubscribedClient decoded(
+    std::get<std::string>(list[0]),
+    std::get<EncodableList>(list[1]));
+  return decoded;
+}
+
 // ReadRequestResult
 
 ReadRequestResult::ReadRequestResult(const std::vector<uint8_t>& value)
@@ -459,6 +500,8 @@ EncodableValue BlePeripheralChannelCodecSerializer::ReadValueOfType(
       return CustomEncodableValue(BleService::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
     case 131:
       return CustomEncodableValue(ManufacturerData::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
+    case 132:
+      return CustomEncodableValue(SubscribedClient::FromEncodableList(std::get<EncodableList>(ReadValue(stream))));
     default:
       return flutter::StandardCodecSerializer::ReadValueOfType(type, stream);
   }
@@ -486,6 +529,11 @@ void BlePeripheralChannelCodecSerializer::WriteValue(
     if (custom_value->type() == typeid(ManufacturerData)) {
       stream->WriteByte(131);
       WriteValue(EncodableValue(std::any_cast<ManufacturerData>(*custom_value).ToEncodableList()), stream);
+      return;
+    }
+    if (custom_value->type() == typeid(SubscribedClient)) {
+      stream->WriteByte(132);
+      WriteValue(EncodableValue(std::any_cast<SubscribedClient>(*custom_value).ToEncodableList()), stream);
       return;
     }
   }
@@ -710,6 +758,27 @@ void BlePeripheralChannel::SetUp(
     }
   }
   {
+    BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.getSubscribedClients", &GetCodec());
+    if (api != nullptr) {
+      channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
+        try {
+          ErrorOr<EncodableList> output = api->GetSubscribedClients();
+          if (output.has_error()) {
+            reply(WrapError(output.error()));
+            return;
+          }
+          EncodableList wrapped;
+          wrapped.push_back(EncodableValue(std::move(output).TakeValue()));
+          reply(EncodableValue(std::move(wrapped)));
+        } catch (const std::exception& exception) {
+          reply(WrapError(exception.what()));
+        }
+      });
+    } else {
+      channel.SetMessageHandler(nullptr);
+    }
+  }
+  {
     BasicMessageChannel<> channel(binary_messenger, "dev.flutter.pigeon.ble_peripheral_plus.BlePeripheralChannel.startAdvertising", &GetCodec());
     if (api != nullptr) {
       channel.SetMessageHandler([api](const EncodableValue& message, const flutter::MessageReply<EncodableValue>& reply) {
@@ -734,7 +803,13 @@ void BlePeripheralChannel::SetUp(
             return;
           }
           const auto& add_manufacturer_data_in_scan_response_arg = std::get<bool>(encodable_add_manufacturer_data_in_scan_response_arg);
-          std::optional<FlutterError> output = api->StartAdvertising(services_arg, local_name_arg, timeout_arg, manufacturer_data_arg, add_manufacturer_data_in_scan_response_arg);
+          const auto& encodable_require_bonding_arg = args.at(5);
+          if (encodable_require_bonding_arg.IsNull()) {
+            reply(WrapError("require_bonding_arg unexpectedly null."));
+            return;
+          }
+          const auto& require_bonding_arg = std::get<bool>(encodable_require_bonding_arg);
+          std::optional<FlutterError> output = api->StartAdvertising(services_arg, local_name_arg, timeout_arg, manufacturer_data_arg, add_manufacturer_data_in_scan_response_arg, require_bonding_arg);
           if (output.has_value()) {
             reply(WrapError(output.value()));
             return;

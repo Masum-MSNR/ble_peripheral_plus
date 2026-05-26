@@ -80,7 +80,16 @@ private class BlePeripheralDarwin: NSObject, BlePeripheralChannel, CBPeripheralM
         }
     }
 
-    func startAdvertising(services: [String], localName: String?, timeout _: Int64?, manufacturerData _: ManufacturerData?, addManufacturerDataInScanResponse _: Bool) throws {
+    func getSubscribedClients() throws -> [SubscribedClient] {
+        return subscribedCentrals.map { central, characteristics in
+            SubscribedClient(
+                deviceId: central.identifier.uuidString,
+                subscribedCharacteristics: characteristics.map { $0.uuid.uuidString }
+            )
+        }
+    }
+
+    func startAdvertising(services: [String], localName: String?, timeout _: Int64?, manufacturerData _: ManufacturerData?, addManufacturerDataInScanResponse _: Bool, requireBonding _: Bool) throws {
         let cbServices = services.map { uuidString in
             CBUUID(string: uuidString)
         }
