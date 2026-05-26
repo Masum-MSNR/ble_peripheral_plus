@@ -35,7 +35,7 @@ It is a compatibility-focused fork of `ble_peripheral` intended for teams that w
 
 ```yaml
 dependencies:
-  ble_peripheral_plus: ^2.5.2
+  ble_peripheral_plus: ^2.5.3
 ```
 
 If you want to use the latest unpublished commit instead of a hosted version:

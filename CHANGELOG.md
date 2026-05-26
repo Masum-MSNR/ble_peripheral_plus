@@ -1,3 +1,7 @@
+## 2.5.3
+
+- Fix Android Kotlin nullability handling in `BleExtension.kt` so the plugin builds cleanly with current generated Pigeon types and newer Kotlin toolchains.
+
 ## 2.5.2
 
 - Fix the Swift Package Manager product name so Flutter's generated iOS and macOS package graph resolves `ble_peripheral_plus` correctly.

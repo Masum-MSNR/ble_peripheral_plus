@@ -38,10 +38,8 @@ fun BleService.toGattService(): BluetoothGattService {
         UUID.fromString(uuid),
         if (primary) BluetoothGattService.SERVICE_TYPE_PRIMARY else BluetoothGattService.SERVICE_TYPE_SECONDARY
     )
-    characteristics.forEach {
-        it.toGattCharacteristic().let { characteristic ->
-            service.addCharacteristic(characteristic)
-        }
+    characteristics.filterNotNull().forEach { characteristic ->
+        service.addCharacteristic(characteristic.toGattCharacteristic())
     }
     return service
 }
@@ -55,10 +53,8 @@ fun BleCharacteristic.toGattCharacteristic(): BluetoothGattCharacteristic {
     value?.let {
         char.value = it
     }
-    descriptors?.forEach {
-        it.toGattDescriptor().let { descriptor ->
-            char.addDescriptor(descriptor)
-        }
+    descriptors?.filterNotNull()?.forEach { descriptor ->
+        char.addDescriptor(descriptor.toGattDescriptor())
     }
 
     addCCDescriptorIfRequired(this, char)
@@ -79,7 +75,7 @@ fun addCCDescriptorIfRequired(
     if (!haveNotifyOrIndicateProperty) return
 
     var cccdDescriptorAlreadyAdded = false
-    for (descriptor in bleCharacteristic.descriptors ?: Collections.emptyList()) {
+    for (descriptor in bleCharacteristic.descriptors?.filterNotNull().orEmpty()) {
         if (descriptor.uuid.lowercase() == descriptorCCUUID.lowercase()) {
             cccdDescriptorAlreadyAdded = true
             break
@@ -137,12 +133,12 @@ fun String.findService(): BluetoothGattService? {
     return null
 }
 
-fun List<Long>.toPropertiesList(): Int {
-    return this.map { it.toInt() }.fold(0) { acc, i -> acc or i.toProperties() }.toInt()
+fun List<Long?>.toPropertiesList(): Int {
+    return this.filterNotNull().fold(0) { acc, i -> acc or i.toInt().toProperties() }
 }
 
-fun List<Long>.toPermissionsList(): Int {
-    return this.map { it.toInt() }.fold(0) { acc, i -> acc or i.toPermission() }.toInt()
+fun List<Long?>.toPermissionsList(): Int {
+    return this.filterNotNull().fold(0) { acc, i -> acc or i.toInt().toPermission() }
 }
 
 fun Int.toProperties(): Int {
