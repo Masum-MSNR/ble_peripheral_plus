@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'ble_peripheral_plus'
-  s.version          = '2.5.1'
+  s.version          = '2.5.2'
   s.summary          = 'A maintained fork of the ble_peripheral Flutter plugin.'
   s.description      = <<-DESC
 A maintained fork of the ble_peripheral Flutter plugin.

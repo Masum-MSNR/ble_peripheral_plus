@@ -1,3 +1,8 @@
+## 2.5.2
+
+- Fix the Swift Package Manager product name so Flutter's generated iOS and macOS package graph resolves `ble_peripheral_plus` correctly.
+- Keep the existing CocoaPods integration unchanged.
+
 ## 2.5.1
 
 First public `ble_peripheral_plus` release.
@@ -13,32 +18,5 @@ First public `ble_peripheral_plus` release.
 - Improve Windows support detection and targeted characteristic updates.
 - Refresh Android and iOS example projects for current Flutter toolchains.
 - Expand publish-ready documentation and package metadata.
-*** Add File: /Volumes/Mac-E-SSD/projects/flutter_packages/ble_peripheral_plus/darwin/ble_peripheral_plus/Package.swift
-// swift-tools-version: 5.9
-// The swift-tools-version declares the minimum version of Swift required to build this package.
-
-import PackageDescription
-
-let package = Package(
-	name: "ble_peripheral_plus",
-	platforms: [
-		.iOS("13.0"),
-		.macOS("10.15"),
-	],
-	products: [
-		.library(name: "ble_peripheral_plus", targets: ["ble_peripheral_plus"]),
-	],
-	dependencies: [
-		.package(name: "FlutterFramework", path: "../FlutterFramework"),
-	],
-	targets: [
-		.target(
-			name: "ble_peripheral_plus",
-			dependencies: [
-				.product(name: "FlutterFramework", package: "FlutterFramework"),
-			]
-		),
-	]
-)
 
 Historical functionality before this fork is inherited from the upstream `ble_peripheral` package.

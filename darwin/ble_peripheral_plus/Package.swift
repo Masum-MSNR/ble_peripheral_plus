@@ -10,7 +10,7 @@ let package = Package(
         .macOS("10.15"),
     ],
     products: [
-        .library(name: "ble_peripheral_plus", targets: ["ble_peripheral_plus"]),
+        .library(name: "ble-peripheral-plus", targets: ["ble_peripheral_plus"]),
     ],
     dependencies: [
         .package(name: "FlutterFramework", path: "../FlutterFramework"),
