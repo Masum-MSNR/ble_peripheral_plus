@@ -76,11 +76,11 @@ class BlePeripheralPigeon extends BlePeripheralInterface {
   Future<List<String>> getServices() async =>
       (await _channel.getServices()).whereType<String>().toList();
 
-    @override
-    Future<List<SubscribedClient>> getSubscribedClients() async =>
+  @override
+  Future<List<SubscribedClient>> getSubscribedClients() async =>
       (await _channel.getSubscribedClients())
-        .whereType<SubscribedClient>()
-        .toList();
+          .whereType<SubscribedClient>()
+          .toList();
 
   /// To update the value of a characteristic
   @override
@@ -112,7 +112,7 @@ class BlePeripheralPigeon extends BlePeripheralInterface {
       );
     }
     return _channel.startAdvertising(services, localName, timeout,
-      manufacturerData, addManufacturerDataInScanResponse, requireBonding);
+        manufacturerData, addManufacturerDataInScanResponse, requireBonding);
   }
 
   /// Stop advertising
