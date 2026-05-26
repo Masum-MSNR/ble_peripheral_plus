@@ -1,3 +1,7 @@
+## 2.5.4
+
+- Fix iOS and macOS characteristic registration so CoreBluetooth only receives cached values for static read-only characteristics, avoiding crashes when a characteristic is writable, notifiable, or indicative.
+
 ## 2.5.3
 
 - Fix Android Kotlin nullability handling in `BleExtension.kt` so the plugin builds cleanly with current generated Pigeon types and newer Kotlin toolchains.

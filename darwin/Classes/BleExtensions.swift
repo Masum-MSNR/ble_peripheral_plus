@@ -62,11 +62,28 @@ extension BleCharacteristic {
 
         let combinedProperties = properties.reduce(CBCharacteristicProperties()) { $0.union($1) }
         let combinedPermissions = permissions.reduce(CBAttributePermissions()) { $0.union($1) }
+        let dynamicProperties: CBCharacteristicProperties = [
+            .write,
+            .writeWithoutResponse,
+            .notify,
+            .indicate,
+            .authenticatedSignedWrites,
+            .notifyEncryptionRequired,
+            .indicateEncryptionRequired,
+        ]
+        let writablePermissions: CBAttributePermissions = [
+            .writeable,
+            .writeEncryptionRequired,
+        ]
+        // CoreBluetooth only accepts a cached value for static read-only characteristics.
+        let cachedValue = combinedProperties.isDisjoint(with: dynamicProperties) && combinedPermissions.isDisjoint(with: writablePermissions)
+            ? value?.toData()
+            : nil
 
         let char = CBMutableCharacteristic(
             type: CBUUID(string: uuid),
             properties: combinedProperties,
-            value: value?.toData(),
+            value: cachedValue,
             permissions: combinedPermissions
         )
         char.descriptors = descriptors?.compactMap { desc in

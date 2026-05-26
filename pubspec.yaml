@@ -1,6 +1,6 @@
 name: ble_peripheral_plus
 description: A maintained Flutter BLE peripheral and GATT server plugin for Android, iOS, macOS, and Windows, based on ble_peripheral.
-version: 2.5.3
+version: 2.5.4
 homepage: https://github.com/Masum-MSNR/ble_peripheral_plus
 repository: https://github.com/Masum-MSNR/ble_peripheral_plus
 issue_tracker: https://github.com/Masum-MSNR/ble_peripheral_plus/issues
