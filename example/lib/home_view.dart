@@ -1,4 +1,4 @@
-import 'package:ble_peripheral/ble_peripheral.dart';
+import 'package:ble_peripheral_plus/ble_peripheral.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'home_controller.dart';
@@ -35,8 +35,8 @@ class HomeView extends GetView<HomeController> {
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     const ElevatedButton(
-                      onPressed: BlePeripheral.askBlePermission,
-                      child: Text('Ask Permission'),
+                      onPressed: null,
+                      child: Text('Use permission_handler'),
                     ),
                     ElevatedButton(
                       onPressed: controller.addServices,

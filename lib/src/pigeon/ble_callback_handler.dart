@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:ble_peripheral/ble_peripheral.dart';
-import 'package:ble_peripheral/src/ble_peripheral_interface.dart';
+import 'package:ble_peripheral_plus/ble_peripheral.dart';
+import 'package:ble_peripheral_plus/src/ble_peripheral_interface.dart';
 
 /// A class that handles the callbacks from the BLE plugin.
 /// This class is used to convert the callbacks to a more readable format.

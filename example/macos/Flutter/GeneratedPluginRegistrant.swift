@@ -5,7 +5,7 @@
 import FlutterMacOS
 import Foundation
 
-import ble_peripheral
+import ble_peripheral_plus
 
 func RegisterGeneratedPlugins(registry: FlutterPluginRegistry) {
   BlePeripheralPlugin.register(with: registry.registrar(forPlugin: "BlePeripheralPlugin"))

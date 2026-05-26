@@ -82,13 +82,13 @@ extension BleCharacteristic {
 extension String {
     func findCharacteristic() -> CBMutableCharacteristic? {
         return characteristicsList.first { ch in
-            ch.uuid.uuidString == self
+            ch.uuid.uuidString.lowercased() == lowercased()
         }
     }
 
     func findService() -> CBMutableService? {
         return servicesList.first { ch in
-            ch.uuid.uuidString == self
+            ch.uuid.uuidString.lowercased() == lowercased()
         }
     }
 }
@@ -203,4 +203,10 @@ extension [Int64?] {
         }
         return Data(bytes: finalArray, count: finalArray.count)
     }
+}
+
+struct CharacteristicUpdate {
+    let characteristic: CBMutableCharacteristic
+    let data: Data
+    let central: CBCentral?
 }

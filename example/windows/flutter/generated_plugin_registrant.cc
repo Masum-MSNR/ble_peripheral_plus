@@ -6,7 +6,7 @@
 
 #include "generated_plugin_registrant.h"
 
-#include <ble_peripheral/ble_peripheral_plugin_c_api.h>
+#include <ble_peripheral_plus/ble_peripheral_plugin_c_api.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
   BlePeripheralPluginCApiRegisterWithRegistrar(

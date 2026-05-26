@@ -1,8 +1,6 @@
-# Ble Peripheral
+# Ble Peripheral Plus
 
-[![ble_peripheral version](https://img.shields.io/pub/v/ble_peripheral?label=ble_peripheral)](https://pub.dev/packages/ble_peripheral)
-
-Ble peripheral is a Flutter plugin that allows you to use your device as Bluetooth Low Energy (BLE) peripheral
+ble_peripheral_plus is a maintained fork of ble_peripheral for using a device as a Bluetooth Low Energy peripheral.
 
 This is an OS-independent plugin for creating a BLE Generic Attribute Profile (GATT) server to broadcast user-defined services and characteristics. This is particularly useful when prototyping and testing servers on different devices with the goal of ensuring that expected behavior matches across all systems.
 

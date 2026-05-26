@@ -3,7 +3,7 @@ import 'package:pigeon/pigeon.dart';
 // dart run pigeon --input pigeons/ble.dart
 @ConfigurePigeon(
   PigeonOptions(
-    dartPackageName: 'ble_peripheral',
+    dartPackageName: 'ble_peripheral_plus',
     dartOut: 'lib/src/generated/ble_peripheral.g.dart',
     dartOptions: DartOptions(),
     kotlinOut:
@@ -24,16 +24,16 @@ enum BondState { bonding, bonded, none }
 class BleService {
   String uuid;
   bool primary;
-  List<BleCharacteristic> characteristics;
+  List<BleCharacteristic?> characteristics;
   BleService(this.uuid, this.primary, this.characteristics);
 }
 
 // Use enums instead of int after fixing: https://github.com/flutter/flutter/issues/133728
 class BleCharacteristic {
   String uuid;
-  List<int> properties;
-  List<int> permissions;
-  List<BleDescriptor>? descriptors;
+  List<int?> properties;
+  List<int?> permissions;
+  List<BleDescriptor?>? descriptors;
   Uint8List? value;
   
   BleCharacteristic(
@@ -48,7 +48,7 @@ class BleCharacteristic {
 class BleDescriptor {
   String uuid;
   Uint8List? value;
-  List<int>? permissions;
+  List<int?>? permissions;
   BleDescriptor(this.uuid, this.value, this.permissions);
 }
 

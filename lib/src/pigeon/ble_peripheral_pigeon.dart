@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:ble_peripheral/ble_peripheral.dart';
-import 'package:ble_peripheral/src/pigeon/ble_callback_handler.dart';
-import 'package:ble_peripheral/src/ble_peripheral_interface.dart';
+import 'package:ble_peripheral_plus/ble_peripheral.dart';
+import 'package:ble_peripheral_plus/src/pigeon/ble_callback_handler.dart';
+import 'package:ble_peripheral_plus/src/ble_peripheral_interface.dart';
 import 'package:flutter/foundation.dart';
 
 class BlePeripheralPigeon extends BlePeripheralInterface {
@@ -18,7 +18,7 @@ class BlePeripheralPigeon extends BlePeripheralInterface {
   @override
   Future initialize() async {
     await _channel.initialize();
-    BleCallback.setUp(_callbackHandler);
+    BleCallback.setup(_callbackHandler);
   }
 
   /// check if blePeripheral is supported on the device
@@ -73,7 +73,8 @@ class BlePeripheralPigeon extends BlePeripheralInterface {
 
   /// Get list of services added to the peripheral
   @override
-  Future<List<String>> getServices() => _channel.getServices();
+  Future<List<String>> getServices() async =>
+      (await _channel.getServices()).whereType<String>().toList();
 
   /// To update the value of a characteristic
   @override
