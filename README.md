@@ -1,7 +1,7 @@
 # ble_peripheral_plus
 
 <!-- eazyverse:apps:start -->
-<a href="https://eazyverse.com/apps?utm_source=pub.dev&utm_medium=readme&utm_campaign=ble_peripheral_plus"><img src="images/apps-badges.png" alt="Apps by EazyVerse" width="214"></a>
+<a href="https://play.google.com/store/apps/details?id=com.eazyverse.listkin&referrer=utm_source%3Dpub.dev%26utm_medium%3Dreadme%26utm_campaign%3Dble_peripheral_plus"><img src="images/app-listkin.png" alt="Listkin on Google Play" width="79"></a>
 <!-- eazyverse:apps:end -->
 
 `ble_peripheral_plus` is a maintained Flutter BLE peripheral and GATT server plugin for Android, iOS, macOS, and Windows.
