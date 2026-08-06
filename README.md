@@ -1,5 +1,9 @@
 # ble_peripheral_plus
 
+<!-- eazyverse:apps:start -->
+<a href="https://eazyverse.com/apps?utm_source=pub.dev&utm_medium=readme&utm_campaign=ble_peripheral_plus"><img src="images/apps-badges.png" alt="Apps by EazyVerse" width="214"></a>
+<!-- eazyverse:apps:end -->
+
 `ble_peripheral_plus` is a maintained Flutter BLE peripheral and GATT server plugin for Android, iOS, macOS, and Windows.
 
 It is a compatibility-focused fork of `ble_peripheral` intended for teams that want to keep the established API shape while getting selected runtime fixes, newer project compatibility updates, and clearer platform guidance.
